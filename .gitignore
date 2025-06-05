@@ -1,5 +1,26 @@
 .idea/
-build/
-.dart_tool/
-*.log
+.vscode/
 *.iml
+*.log
+.DS_Store
+
+# Flutter & Dart
+.dart_tool/
+.packages
+.pub/
+.pub-cache/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Build outputs
+build/
+*/build/
+**/android/.gradle/
+**/.cxx/
+**/Flutter/ephemeral/
+
+# Generated plugin registrants
+**/GeneratedPluginRegistrant.*
+
+# Misc
+coverage/
