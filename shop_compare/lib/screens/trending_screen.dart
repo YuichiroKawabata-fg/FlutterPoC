@@ -25,7 +25,8 @@ class TrendingScreen extends StatelessWidget {
                 margin: const EdgeInsets.all(8),
                 child: ListTile(
                   title: Text('${p.shopName}: ${p.name}'),
-                  subtitle: Text('¥${p.price} (送料: ¥${p.shipping})\n到着予定: ${p.eta}'),
+                  subtitle: Text(
+                      '¥${p.price} (送料: ¥${p.shipping} ${p.shippingName})\n到着予定: ${p.eta} (${p.deliveryDay}日)'),
                 ),
               );
             },

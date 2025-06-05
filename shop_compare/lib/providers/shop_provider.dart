@@ -54,11 +54,15 @@ class ShopProvider with ChangeNotifier {
             image = await _fetchImageFromYahoo(e['code']);
           }
           final itemUrl = e['url'] ?? '';
+          final shippingName = e['shipping']?['name'] ?? '';
+          final deliveryDay = (e['delivery']?['day'] as num?)?.toInt() ?? 0;
           return Product(
             shopName: 'Yahoo',
             name: e['name'] ?? '',
             price: (e['price'] as num?)?.toInt() ?? 0,
             shipping: 0,
+            shippingName: shippingName,
+            deliveryDay: deliveryDay,
             eta: '',
             imageUrl: image,
             itemUrl: itemUrl,
@@ -75,17 +79,62 @@ class ShopProvider with ChangeNotifier {
   List<Product> _mockSearch(String query) {
     // Placeholder search returning sample data.
     return [
-      Product(shopName: 'Amazon', name: '$query 商品1', price: 1000, shipping: 0, eta: '2 days', imageUrl: '', itemUrl: ''),
-      Product(shopName: '楽天', name: '$query 商品1', price: 1100, shipping: 100, eta: '3 days', imageUrl: '', itemUrl: ''),
-      Product(shopName: 'Yahoo', name: '$query 商品2', price: 1050, shipping: 50, eta: '4 days', imageUrl: '', itemUrl: ''),
+      Product(
+          shopName: 'Amazon',
+          name: '$query 商品1',
+          price: 1000,
+          shipping: 0,
+          shippingName: '送料無料',
+          deliveryDay: 2,
+          eta: '2 days',
+          imageUrl: '',
+          itemUrl: ''),
+      Product(
+          shopName: '楽天',
+          name: '$query 商品1',
+          price: 1100,
+          shipping: 100,
+          shippingName: '宅配便',
+          deliveryDay: 3,
+          eta: '3 days',
+          imageUrl: '',
+          itemUrl: ''),
+      Product(
+          shopName: 'Yahoo',
+          name: '$query 商品2',
+          price: 1050,
+          shipping: 50,
+          shippingName: '宅配便',
+          deliveryDay: 4,
+          eta: '4 days',
+          imageUrl: '',
+          itemUrl: ''),
     ];
   }
 
   Future<List<Product>> trending(String category) async {
     await Future.delayed(const Duration(milliseconds: 300));
     return [
-      Product(shopName: 'Amazon', name: '$category Hit A', price: 2000, shipping: 0, eta: '2 days', imageUrl: '', itemUrl: ''),
-      Product(shopName: 'Rakuten', name: '$category Hit B', price: 2100, shipping: 100, eta: '3 days', imageUrl: '', itemUrl: ''),
+      Product(
+          shopName: 'Amazon',
+          name: '$category Hit A',
+          price: 2000,
+          shipping: 0,
+          shippingName: '送料無料',
+          deliveryDay: 2,
+          eta: '2 days',
+          imageUrl: '',
+          itemUrl: ''),
+      Product(
+          shopName: 'Rakuten',
+          name: '$category Hit B',
+          price: 2100,
+          shipping: 100,
+          shippingName: '宅配便',
+          deliveryDay: 3,
+          eta: '3 days',
+          imageUrl: '',
+          itemUrl: ''),
     ];
   }
 }
