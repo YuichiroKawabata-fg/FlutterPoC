@@ -19,7 +19,6 @@ When launched, the app opens to a **product search screen** where you can enter 
 
 ## Directory overview
 
-- `hello_world` – simple "Hello world" example.
 - `shop_compare` – product search and price comparison prototype.
 
 ## Troubleshooting
