@@ -20,6 +20,7 @@ class _AggregatedProduct {
   int get minPrice => offers.map((p) => p.price).reduce((a, b) => a < b ? a : b);
   int get maxPrice => offers.map((p) => p.price).reduce((a, b) => a > b ? a : b);
   List<String> get shopNames => offers.map((p) => p.shopName).toList();
+  String get imageUrl => offers.isNotEmpty ? offers.first.imageUrl : '';
 }
 
 class _SearchScreenState extends State<SearchScreen> {
@@ -63,10 +64,12 @@ class _SearchScreenState extends State<SearchScreen> {
                           margin: const EdgeInsets.all(8),
                           child: Row(
                             children: [
-                              const SizedBox(
+                              SizedBox(
                                 width: 80,
                                 height: 80,
-                                child: Icon(Icons.image, size: 50),
+                                child: item.imageUrl.isEmpty
+                                    ? const Icon(Icons.image, size: 50)
+                                    : Image.network(item.imageUrl, fit: BoxFit.cover),
                               ),
                               Expanded(
                                 child: ListTile(

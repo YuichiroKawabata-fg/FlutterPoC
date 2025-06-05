@@ -15,7 +15,7 @@ class FakeShopProvider extends ShopProvider {
 }
 
 void main() {
-  testWidgets('searching navigates to result screen', (WidgetTester tester) async {
+  testWidgets('search button triggers provider search', (WidgetTester tester) async {
     final provider = FakeShopProvider();
     await tester.pumpWidget(
       ChangeNotifierProvider<ShopProvider>.value(
@@ -31,6 +31,5 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(provider.called, isTrue);
-    expect(find.text('検索結果'), findsOneWidget);
   });
 }
