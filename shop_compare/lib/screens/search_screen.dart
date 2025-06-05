@@ -20,7 +20,10 @@ class _AggregatedProduct {
   int get minPrice => offers.map((p) => p.price).reduce((a, b) => a < b ? a : b);
   int get maxPrice => offers.map((p) => p.price).reduce((a, b) => a > b ? a : b);
   List<String> get shopNames => offers.map((p) => p.shopName).toList();
-  String get imageUrl => offers.isNotEmpty ? offers.first.imageUrl : '';
+  String get imageUrl =>
+      offers.isNotEmpty && offers.first.imageUrls.isNotEmpty
+          ? offers.first.imageUrls.first
+          : '';
   String get shippingName {
     if (offers.isEmpty) return '';
     final cheapest = offers.reduce((a, b) => a.price <= b.price ? a : b);
