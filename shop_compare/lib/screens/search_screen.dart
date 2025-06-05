@@ -119,6 +119,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 controller: _minController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(labelText: '最小'),
+                onChanged: (_) => setState(() {}),
               ),
             ),
             const SizedBox(width: 8),
@@ -128,6 +129,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 controller: _maxController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(labelText: '最大'),
+                onChanged: (_) => setState(() {}),
               ),
             ),
           ],
@@ -158,8 +160,17 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   List<_AggregatedProduct> _aggregate(List<Product> list) {
+    final min = int.tryParse(_minController.text);
+    final max = int.tryParse(_maxController.text);
+
+    final filtered = list.where((p) {
+      if (min != null && p.price < min) return false;
+      if (max != null && p.price > max) return false;
+      return true;
+    });
+
     final map = <String, List<Product>>{};
-    for (var p in list) {
+    for (var p in filtered) {
       map.putIfAbsent(p.name, () => []).add(p);
     }
     final items = map.entries
