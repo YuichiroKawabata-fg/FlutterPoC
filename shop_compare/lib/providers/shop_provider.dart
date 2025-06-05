@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../models/product.dart';
+import '../utils/product_merger.dart';
 
 class ShopProvider with ChangeNotifier {
   List<Product> _results = [];
@@ -52,7 +53,7 @@ class ShopProvider with ChangeNotifier {
     final yahoo = results[0] as List<Product>;
     final rakuten = results[1] as List<Product>;
     final others = _mockSearch(query);
-    _results = [...yahoo, ...rakuten, ...others];
+    _results = mergeProductLists([yahoo, rakuten, others]);
     notifyListeners();
   }
 
@@ -83,6 +84,7 @@ class ShopProvider with ChangeNotifier {
           final itemUrl = e['url'] ?? '';
           final shippingName = e['shipping']?['name'] ?? '';
           final deliveryDay = (e['delivery']?['day'] as num?)?.toInt() ?? 0;
+          final jan = e['janCode'] ?? '';
           return Product(
             shopName: 'Yahoo',
             name: e['name'] ?? '',
@@ -93,6 +95,7 @@ class ShopProvider with ChangeNotifier {
             eta: '',
             imageUrls: images,
             itemUrl: itemUrl,
+            jan: jan,
           );
         }).toList();
         return Future.wait(futures);
@@ -129,6 +132,7 @@ class ShopProvider with ChangeNotifier {
             if (url is String) imageUrls.add(url);
           }
           final itemUrl = item['affiliateUrl'] ?? item['itemUrl'] ?? '';
+          final jan = item['jan'] ?? '';
           return Product(
             shopName: 'Rakuten',
             name: item['itemName'] ?? '',
@@ -139,6 +143,7 @@ class ShopProvider with ChangeNotifier {
             eta: '',
             imageUrls: imageUrls,
             itemUrl: itemUrl,
+            jan: jan,
           );
         }).whereType<Product>().toList();
       }

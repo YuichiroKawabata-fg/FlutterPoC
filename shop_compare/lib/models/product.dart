@@ -8,6 +8,7 @@ class Product {
   final String eta;
   final List<String> imageUrls;
   final String itemUrl;
+  final String jan;
 
   Product({
     required this.shopName,
@@ -19,6 +20,7 @@ class Product {
     required this.eta,
     required this.imageUrls,
     required this.itemUrl,
+    this.jan = '',
   });
 
   String get imageUrl => imageUrls.isNotEmpty ? imageUrls.first : '';
