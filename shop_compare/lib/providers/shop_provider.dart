@@ -120,7 +120,7 @@ class ShopProvider with ChangeNotifier {
         final data = jsonDecode(res.body) as Map<String, dynamic>;
         final items = data['Items'] as List<dynamic>?;
         if (items == null) return [];
-        return items.map<Product>((e) {
+        return items.map<Product? >((e) {
           final item = e['Item'] as Map<String, dynamic>?;
           if (item == null) {
             return null;
