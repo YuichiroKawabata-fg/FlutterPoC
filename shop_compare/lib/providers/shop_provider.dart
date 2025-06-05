@@ -10,7 +10,7 @@ class ShopProvider with ChangeNotifier {
   static const _yahooClientId =
       'dj00aiZpPXJkMXJNYjZLTEQyMyZzPWNvbnN1bWVyc2VjcmV0Jng9NzE-';
 
-  Future<String> _fetchImageFromYahoo(String itemCode) async {
+  Future<List<String>> _fetchImagesFromYahoo(String itemCode) async {
     final uri = Uri.https('shopping.yahooapis.jp',
         '/ShoppingWebService/V1/json/itemImageList', {
       'appid': _yahooClientId,
@@ -20,13 +20,25 @@ class ShopProvider with ChangeNotifier {
       final res = await http.get(uri);
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body);
-        final image = data['ResultSet']?['0']?['Result']?['0']?['Image']?[0]?['Small'];
-        if (image is String) return image;
+        final results = data['ResultSet']?['0']?['Result'];
+        if (results is Map) {
+          final images = <String>[];
+          for (final r in results.values) {
+            final list = r['Image'] as List?;
+            if (list != null) {
+              for (final i in list) {
+                final url = i['Small'];
+                if (url is String) images.add(url);
+              }
+            }
+          }
+          return images;
+        }
       }
     } catch (_) {
       // ignore errors
     }
-    return '';
+    return [];
   }
 
   Future<void> search(String query) async {
@@ -49,9 +61,16 @@ class ShopProvider with ChangeNotifier {
         final data = jsonDecode(res.body) as Map<String, dynamic>;
         final hits = data['hits'] as List<dynamic>;
         final futures = hits.map<Future<Product>>((e) async {
-          String image = e['image']?['small'] ?? '';
-          if (image.isEmpty && e['code'] != null) {
-            image = await _fetchImageFromYahoo(e['code']);
+          final images = <String>[];
+          final small = e['image']?['small'];
+          if (small is String && small.isNotEmpty) {
+            images.add(small);
+          }
+          if (e['code'] != null) {
+            final others = await _fetchImagesFromYahoo(e['code']);
+            for (final img in others) {
+              if (!images.contains(img)) images.add(img);
+            }
           }
           final itemUrl = e['url'] ?? '';
           final shippingName = e['shipping']?['name'] ?? '';
@@ -64,7 +83,7 @@ class ShopProvider with ChangeNotifier {
             shippingName: shippingName,
             deliveryDay: deliveryDay,
             eta: '',
-            imageUrl: image,
+            imageUrls: images,
             itemUrl: itemUrl,
           );
         }).toList();
@@ -87,7 +106,7 @@ class ShopProvider with ChangeNotifier {
           shippingName: '送料無料',
           deliveryDay: 2,
           eta: '2 days',
-          imageUrl: '',
+          imageUrls: const [],
           itemUrl: ''),
       Product(
           shopName: '楽天',
@@ -97,7 +116,7 @@ class ShopProvider with ChangeNotifier {
           shippingName: '宅配便',
           deliveryDay: 3,
           eta: '3 days',
-          imageUrl: '',
+          imageUrls: const [],
           itemUrl: ''),
       Product(
           shopName: 'Yahoo',
@@ -107,7 +126,7 @@ class ShopProvider with ChangeNotifier {
           shippingName: '宅配便',
           deliveryDay: 4,
           eta: '4 days',
-          imageUrl: '',
+          imageUrls: const [],
           itemUrl: ''),
     ];
   }
@@ -123,7 +142,7 @@ class ShopProvider with ChangeNotifier {
           shippingName: '送料無料',
           deliveryDay: 2,
           eta: '2 days',
-          imageUrl: '',
+          imageUrls: const [],
           itemUrl: ''),
       Product(
           shopName: 'Rakuten',
@@ -133,7 +152,7 @@ class ShopProvider with ChangeNotifier {
           shippingName: '宅配便',
           deliveryDay: 3,
           eta: '3 days',
-          imageUrl: '',
+          imageUrls: const [],
           itemUrl: ''),
     ];
   }

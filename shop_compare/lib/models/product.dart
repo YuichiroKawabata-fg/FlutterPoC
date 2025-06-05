@@ -6,7 +6,7 @@ class Product {
   final String shippingName;
   final int deliveryDay;
   final String eta;
-  final String imageUrl;
+  final List<String> imageUrls;
   final String itemUrl;
 
   Product({
@@ -17,7 +17,9 @@ class Product {
     required this.shippingName,
     required this.deliveryDay,
     required this.eta,
-    required this.imageUrl,
+    required this.imageUrls,
     required this.itemUrl,
   });
+
+  String get imageUrl => imageUrls.isNotEmpty ? imageUrls.first : '';
 }

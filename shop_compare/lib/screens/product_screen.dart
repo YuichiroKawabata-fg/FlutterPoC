@@ -9,7 +9,7 @@ class ProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl = offers.isNotEmpty ? offers.first.imageUrl : '';
+    final images = offers.isNotEmpty ? offers.first.imageUrls : const <String>[];
     return Scaffold(
       appBar: AppBar(title: Text(productName)),
       body: Column(
@@ -20,20 +20,19 @@ class ProductScreen extends StatelessWidget {
                 context: context,
                 builder: (_) => Dialog(
                   child: SizedBox(
-                    width: 200,
-                    height: 200,
-                    child: imageUrl.isEmpty
-                        ? const Icon(Icons.image, size: 150)
-                        : Image.network(imageUrl, fit: BoxFit.cover),
+                    width: 300,
+                    height: 300,
+                    child: _buildGallery(images),
                   ),
                 ),
               );
             },
             child: Padding(
               padding: EdgeInsets.all(16),
-              child: imageUrl.isEmpty
-                  ? const Icon(Icons.image, size: 100)
-                  : Image.network(imageUrl, width: 100, height: 100),
+              child: SizedBox(
+                height: 150,
+                child: _buildGallery(images),
+              ),
             ),
           ),
           Expanded(
@@ -59,6 +58,18 @@ class ProductScreen extends StatelessWidget {
           ),
         ],
       ),
+      );
+  }
+
+  Widget _buildGallery(List<String> urls) {
+    if (urls.isEmpty) {
+      return const Icon(Icons.image, size: 100);
+    }
+    return PageView.builder(
+      itemCount: urls.length,
+      itemBuilder: (context, index) {
+        return Image.network(urls[index], fit: BoxFit.cover);
+      },
     );
   }
 }
