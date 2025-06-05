@@ -22,3 +22,19 @@ When launched, the app opens to a **product search screen** where you can enter 
 - `hello_world` – simple "Hello world" example.
 - `shop_compare` – product search and price comparison prototype.
 
+## Troubleshooting
+
+If the build fails with a message similar to:
+
+```
+Build failed due to use of deleted Android v1 embedding.
+```
+
+Your Flutter SDK is newer than some of the plugins used in this project. Run:
+
+```bash
+flutter pub upgrade
+```
+
+to fetch compatible plugin versions. Afterwards try `flutter run` again.
+
