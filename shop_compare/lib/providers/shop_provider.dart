@@ -10,6 +10,10 @@ class ShopProvider with ChangeNotifier {
   static const _yahooClientId =
       'dj00aiZpPXJkMXJNYjZLTEQyMyZzPWNvbnN1bWVyc2VjcmV0Jng9NzE-';
 
+  static const _rakutenAppId = '1019558712714302383';
+  static const _rakutenAffiliateId =
+      '48e3be2a.386fa266.48e3be2b.77e888c7';
+
   Future<List<String>> _fetchImagesFromYahoo(String itemCode) async {
     final uri = Uri.https('shopping.yahooapis.jp',
         '/ShoppingWebService/V1/json/itemImageList', {
@@ -42,9 +46,13 @@ class ShopProvider with ChangeNotifier {
   }
 
   Future<void> search(String query) async {
-    final yahoo = await _searchYahoo(query);
+    final yahooFuture = _searchYahoo(query);
+    final rakutenFuture = _searchRakuten(query);
+    final results = await Future.wait([yahooFuture, rakutenFuture]);
+    final yahoo = results[0] as List<Product>;
+    final rakuten = results[1] as List<Product>;
     final others = _mockSearch(query);
-    _results = [...yahoo, ...others];
+    _results = [...yahoo, ...rakuten, ...others];
     notifyListeners();
   }
 
@@ -88,6 +96,51 @@ class ShopProvider with ChangeNotifier {
           );
         }).toList();
         return Future.wait(futures);
+      }
+    } catch (_) {
+      // ignore errors
+    }
+    return [];
+  }
+
+  Future<List<Product>> _searchRakuten(String query) async {
+    final uri = Uri.https('app.rakuten.co.jp',
+        '/services/api/IchibaItem/Search/20170706', {
+      'applicationId': _rakutenAppId,
+      'affiliateId': _rakutenAffiliateId,
+      'keyword': query,
+      'hits': '10',
+    });
+    try {
+      final res = await http.get(uri);
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body) as Map<String, dynamic>;
+        final items = data['Items'] as List<dynamic>?;
+        if (items == null) return [];
+        return items.map<Product>((e) {
+          final item = e['Item'] as Map<String, dynamic>?;
+          if (item == null) {
+            return null;
+          }
+          final imageUrls = <String>[];
+          final imgs = item['smallImageUrls'] as List?;
+          if (imgs != null && imgs.isNotEmpty) {
+            final url = imgs[0]['imageUrl'];
+            if (url is String) imageUrls.add(url);
+          }
+          final itemUrl = item['affiliateUrl'] ?? item['itemUrl'] ?? '';
+          return Product(
+            shopName: 'Rakuten',
+            name: item['itemName'] ?? '',
+            price: (item['itemPrice'] as num?)?.toInt() ?? 0,
+            shipping: 0,
+            shippingName: '',
+            deliveryDay: 0,
+            eta: '',
+            imageUrls: imageUrls,
+            itemUrl: itemUrl,
+          );
+        }).whereType<Product>().toList();
       }
     } catch (_) {
       // ignore errors
@@ -156,4 +209,33 @@ class ShopProvider with ChangeNotifier {
           itemUrl: ''),
     ];
   }
+}
+
+/// Test helper that exposes calls to the private search methods.
+class TestShopProvider extends ShopProvider {
+  bool yahooCalled = false;
+  bool rakutenCalled = false;
+
+  List<Product> yahooReturn;
+  List<Product> rakutenReturn;
+
+  TestShopProvider({
+    this.yahooReturn = const [],
+    this.rakutenReturn = const [],
+  });
+
+  @override
+  Future<List<Product>> _searchYahoo(String query) async {
+    yahooCalled = true;
+    return yahooReturn;
+  }
+
+  @override
+  Future<List<Product>> _searchRakuten(String query) async {
+    rakutenCalled = true;
+    return rakutenReturn;
+  }
+
+  @override
+  List<Product> _mockSearch(String query) => [];
 }
