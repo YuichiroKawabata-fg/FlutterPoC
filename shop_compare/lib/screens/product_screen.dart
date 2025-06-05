@@ -9,6 +9,7 @@ class ProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final imageUrl = offers.isNotEmpty ? offers.first.imageUrl : '';
     return Scaffold(
       appBar: AppBar(title: Text(productName)),
       body: Column(
@@ -17,18 +18,22 @@ class ProductScreen extends StatelessWidget {
             onTap: () {
               showDialog(
                 context: context,
-                builder: (_) => const Dialog(
+                builder: (_) => Dialog(
                   child: SizedBox(
                     width: 200,
                     height: 200,
-                    child: Icon(Icons.image, size: 150),
+                    child: imageUrl.isEmpty
+                        ? const Icon(Icons.image, size: 150)
+                        : Image.network(imageUrl, fit: BoxFit.cover),
                   ),
                 ),
               );
             },
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.all(16),
-              child: Icon(Icons.image, size: 100),
+              child: imageUrl.isEmpty
+                  ? const Icon(Icons.image, size: 100)
+                  : Image.network(imageUrl, width: 100, height: 100),
             ),
           ),
           Expanded(

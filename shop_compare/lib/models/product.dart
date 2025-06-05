@@ -4,6 +4,7 @@ class Product {
   final int price;
   final int shipping;
   final String eta;
+  final String imageUrl;
 
   Product({
     required this.shopName,
@@ -11,5 +12,6 @@ class Product {
     required this.price,
     required this.shipping,
     required this.eta,
+    required this.imageUrl,
   });
 }
