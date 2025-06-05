@@ -21,6 +21,17 @@ class _AggregatedProduct {
   int get maxPrice => offers.map((p) => p.price).reduce((a, b) => a > b ? a : b);
   List<String> get shopNames => offers.map((p) => p.shopName).toList();
   String get imageUrl => offers.isNotEmpty ? offers.first.imageUrl : '';
+  String get shippingName {
+    if (offers.isEmpty) return '';
+    final cheapest = offers.reduce((a, b) => a.price <= b.price ? a : b);
+    return cheapest.shippingName;
+  }
+
+  int get deliveryDay {
+    if (offers.isEmpty) return 0;
+    final cheapest = offers.reduce((a, b) => a.price <= b.price ? a : b);
+    return cheapest.deliveryDay;
+  }
 }
 
 class _SearchScreenState extends State<SearchScreen> {
@@ -75,7 +86,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 child: ListTile(
                                   title: Text(item.name),
                                   subtitle: Text(
-                                      '取扱: ${item.shopNames.join(', ')}\n最安値: ¥${item.minPrice}  最高値: ¥${item.maxPrice}'),
+                                      '取扱: ${item.shopNames.join(', ')}\n最安値: ¥${item.minPrice}  最高値: ¥${item.maxPrice}\n配送: ${item.shippingName} (${item.deliveryDay}日)'),
                                 ),
                               ),
                             ],

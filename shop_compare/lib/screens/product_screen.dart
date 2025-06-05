@@ -44,7 +44,8 @@ class ProductScreen extends StatelessWidget {
                 return ListTile(
                   leading: const Icon(Icons.store),
                   title: Text(o.shopName),
-                  subtitle: Text('価格: ¥${o.price} 送料: ¥${o.shipping} 配送: ${o.eta}'),
+                  subtitle: Text(
+                      '価格: ¥${o.price} 送料: ¥${o.shipping} ${o.shippingName} 配送: ${o.eta} (${o.deliveryDay}日)'),
                   onTap: () async {
                     if (o.itemUrl.isEmpty) return;
                     final uri = Uri.parse(o.itemUrl);
