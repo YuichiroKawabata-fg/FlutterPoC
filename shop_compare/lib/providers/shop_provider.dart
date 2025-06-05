@@ -49,17 +49,19 @@ class ShopProvider with ChangeNotifier {
         final data = jsonDecode(res.body) as Map<String, dynamic>;
         final hits = data['hits'] as List<dynamic>;
         final futures = hits.map<Future<Product>>((e) async {
-          String url = e['image']?['small'] ?? '';
-          if (url.isEmpty && e['code'] != null) {
-            url = await _fetchImageFromYahoo(e['code']);
+          String image = e['image']?['small'] ?? '';
+          if (image.isEmpty && e['code'] != null) {
+            image = await _fetchImageFromYahoo(e['code']);
           }
+          final itemUrl = e['url'] ?? '';
           return Product(
             shopName: 'Yahoo',
             name: e['name'] ?? '',
             price: (e['price'] as num?)?.toInt() ?? 0,
             shipping: 0,
             eta: '',
-            imageUrl: url,
+            imageUrl: image,
+            itemUrl: itemUrl,
           );
         }).toList();
         return Future.wait(futures);
@@ -73,17 +75,17 @@ class ShopProvider with ChangeNotifier {
   List<Product> _mockSearch(String query) {
     // Placeholder search returning sample data.
     return [
-      Product(shopName: 'Amazon', name: '$query 商品1', price: 1000, shipping: 0, eta: '2 days', imageUrl: ''),
-      Product(shopName: '楽天', name: '$query 商品1', price: 1100, shipping: 100, eta: '3 days', imageUrl: ''),
-      Product(shopName: 'Yahoo', name: '$query 商品2', price: 1050, shipping: 50, eta: '4 days', imageUrl: ''),
+      Product(shopName: 'Amazon', name: '$query 商品1', price: 1000, shipping: 0, eta: '2 days', imageUrl: '', itemUrl: ''),
+      Product(shopName: '楽天', name: '$query 商品1', price: 1100, shipping: 100, eta: '3 days', imageUrl: '', itemUrl: ''),
+      Product(shopName: 'Yahoo', name: '$query 商品2', price: 1050, shipping: 50, eta: '4 days', imageUrl: '', itemUrl: ''),
     ];
   }
 
   Future<List<Product>> trending(String category) async {
     await Future.delayed(const Duration(milliseconds: 300));
     return [
-      Product(shopName: 'Amazon', name: '$category Hit A', price: 2000, shipping: 0, eta: '2 days', imageUrl: ''),
-      Product(shopName: 'Rakuten', name: '$category Hit B', price: 2100, shipping: 100, eta: '3 days', imageUrl: ''),
+      Product(shopName: 'Amazon', name: '$category Hit A', price: 2000, shipping: 0, eta: '2 days', imageUrl: '', itemUrl: ''),
+      Product(shopName: 'Rakuten', name: '$category Hit B', price: 2100, shipping: 100, eta: '3 days', imageUrl: '', itemUrl: ''),
     ];
   }
 }
