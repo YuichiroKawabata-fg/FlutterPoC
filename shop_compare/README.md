@@ -11,3 +11,13 @@ To fetch dependencies run:
 ```
 flutter pub get
 ```
+
+If you encounter an Android NDK version mismatch error during `flutter run`,
+add the following to `android/app/build.gradle.kts` and ensure the required NDK
+version is installed:
+
+```kotlin
+android {
+    ndkVersion = "27.0.12077973"
+}
+```
