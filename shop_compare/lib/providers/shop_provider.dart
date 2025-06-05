@@ -17,7 +17,6 @@ class ShopProvider with ChangeNotifier {
       Product(shopName: 'Amazon', name: '$query 商品1', price: 1000, shipping: 0, eta: '2 days'),
       Product(shopName: '楽天', name: '$query 商品1', price: 1100, shipping: 100, eta: '3 days'),
       Product(shopName: 'Yahoo', name: '$query 商品2', price: 1050, shipping: 50, eta: '4 days'),
-      Product(shopName: 'ヨドバシ', name: '$query 商品2', price: 980, shipping: 0, eta: '1 day'),
     ];
   }
 
