@@ -46,7 +46,8 @@ class ProductScreen extends StatelessWidget {
                   title: Text(o.shopName),
                   subtitle: Text('価格: ¥${o.price} 送料: ¥${o.shipping} 配送: ${o.eta}'),
                   onTap: () async {
-                    final uri = Uri.parse('https://example.com');
+                    if (o.itemUrl.isEmpty) return;
+                    final uri = Uri.parse(o.itemUrl);
                     if (await canLaunchUrl(uri)) {
                       await launchUrl(uri, mode: LaunchMode.externalApplication);
                     }
